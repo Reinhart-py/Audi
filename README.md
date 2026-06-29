@@ -1,30 +1,69 @@
-# Audio Upload and Playback Stack
+# Audio Cloud
 
-This project contains a full-stack implementation for uploading audio files directly to Cloudinary using an Express backend and displaying/playing them immediately on a React frontend.
+A simple React and Express app to upload audio files to Cloudinary and play them back in a browser and also fetch em 
 
-## Architecture Highlights
 
-1. **Backend (`/backend`)**:
-   - Uses `multer.memoryStorage()` so files are not temporarily written to disk.
-   - Uploads via a byte stream directly to Cloudinary (`cloudinary.uploader.upload_stream`).
-   - Cloudinary strictly requires `resource_type: "video"` for audio files like MP3s.
-   - Returns the secure CDN URL and metadata back to the client.
+##  Instructions
 
-2. **Frontend (`/frontend`)**:
-   - Modern React application utilizing Vite.
-   - Manages file references using `useRef` to maintain an uncontrolled input configuration.
-   - Leverages native HTML5 `<audio controls>` for immediate playback of the returned CDN URL.
+You need two terminal windows to run this app—one for the backend and one for the frontend.
 
-## Setup Instructions
+### 1. Backend Setup
 
-### Backend Setup
-1. Navigate to the `backend/` directory.
-2. Run `npm install`.
-3. Rename `.env.example` to `.env` and fill in your Cloudinary credentials.
-4. Run `npm run dev` to start the Express server on port 3001.
+1. Open a terminal and go to the backend folder:
 
-### Frontend Setup
-1. Navigate to the `frontend/` directory.
-2. Run `npm install`.
-3. Run `npm run dev` to start the Vite development server.
-4. Open the provided localhost URL in your browser, select an audio file, and test the upload/playback flow.
+   ```bash
+   cd backend
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Create your environment variables file:
+
+   - Rename `.env.example` to `.env`
+   - Add your Cloudinary credentials (find these on your Cloudinary dashboard):
+
+   ```env
+   PORT=3001
+   CLOUDINARY_CLOUD_NAME=your_cloud_name
+   CLOUDINARY_API_KEY=your_api_key
+   CLOUDINARY_API_SECRET=your_api_secret
+   ```
+
+4. Start the server:
+
+   ```bash
+   npm run dev
+   ```
+
+   The server will run on `http://localhost:3001`
+
+## 2. Frontend Setup
+
+1. Open a second terminal and go to the frontend folder:
+
+   ```bash
+   cd frontend
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Start the React app:
+
+   ```bash
+   npm run dev
+   ```
+
+4. Open the localhost link provided in the terminal (usually `http://localhost:5173`) in your web browser.
+
+## How it works
+
+- `POST /api/upload`: Takes the audio file using multer, saves it to an `uploads/` folder, pushes it to Cloudinary, then deletes the local file using `fs.unlinkSync`.
+- `GET /api/audio`: Uses the Cloudinary Admin API to fetch the 100 newest files in the `audio_uploads/` folder and sends them to the frontend to display.
