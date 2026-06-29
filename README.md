@@ -1,6 +1,6 @@
-# Audio Cloud
+# what's this shi ?
 
-A simple React and Express app to upload audio files to Cloudinary and play them back in a browser and also fetch em 
+Just A React and Express app to upload audio files to Cloudinary and play them back in a browser and also fetch em 
 
 
 ##  Instructions
