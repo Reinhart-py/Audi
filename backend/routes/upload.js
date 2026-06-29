@@ -1,36 +1,56 @@
 import express from "express";
-import multer from "multer";
+import fs from "fs";
 import cloudinary from "../utils/cloudinary.js";
+import upload from "../utils/multer.js";
 
 const router = express.Router();
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+router.post("/", upload.single("audio"), async (req, res) => {
+  console.log("\n=== Incoming Upload Request ===");
 
-router.post("/", upload.single("audio"), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: "No file provided" });
-  }
+    if (req.fileValidationError) {
+        console.error("Validation Error:", req.fileValidationError);
+            return res.status(400).json({ message: req.fileValidationError });
+              }
 
-  const stream = cloudinary.uploader.upload_stream(
-    {
-      resource_type: "video",
-      folder: "audio_uploads",
-    },
-    (error, result) => {
-      if (error) {
-        return res.status(500).json({ message: error.message });
-      }
+                if (!req.file) {
+                    console.error("Upload Error: No file provided");
+                        return res.status(400).json({ message: "No file provided" });
+                          }
 
-      return res.status(200).json({
-        url: result.secure_url,
-        publicId: result.public_id,
-        format: result.format,
-      });
-    }
-  );
+                            console.log("File temporarily saved to disk at:", req.file.path);
 
-  stream.end(req.file.buffer);
-});
+                              try {
+                                  const fName = req.file.originalname.split(".")[0];
+                                      const extension = req.file.originalname.split(".").pop();
 
-export default router;
+                                          const result = await cloudinary.uploader.upload(req.file.path, {
+                                                resource_type: "raw",
+                                                      public_id: `audio_uploads/${fName}_${Date.now()}.${extension}`,
+                                                          });
+
+                                                              console.log("\n=== Cloudinary Upload Success ===");
+                                                                  console.log("Result URL:", result.secure_url);
+
+                                                                      fs.unlinkSync(req.file.path);
+
+                                                                          return res.status(200).json({
+                                                                                url: result.secure_url,
+                                                                                      publicId: result.public_id,
+                                                                                          });
+                                                                                            } catch (error) {
+                                                                                                console.error("\n=== Cloudinary Upload Error ===");
+                                                                                                    console.error(error);
+
+                                                                                                        if (fs.existsSync(req.file.path)) {
+                                                                                                              fs.unlinkSync(req.file.path);
+                                                                                                                  }
+
+                                                                                                                      return res.status(error.http_code || 500).json({
+                                                                                                                            message: error.message || "Cloudinary upload failed",
+                                                                                                                                  details: error,
+                                                                                                                                      });
+                                                                                                                                        }
+                                                                                                                                        });
+
+                                                                                                                                        export default router;
