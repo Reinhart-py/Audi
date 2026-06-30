@@ -7,7 +7,18 @@ Just A React and Express app to upload audio files to Cloudinary and play them b
 
 You need two terminal windows to run this app—one for the backend and one for the frontend.
 
-### 1. Backend Setup
+#### Running from root folder 
+
+Open a terminal and run:
+
+```
+npm run setup && npm run dev
+```
+
+
+# Manual 
+
+### . Backend Setup
 
 1. Open a terminal and go to the backend folder:
 
