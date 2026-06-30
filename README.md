@@ -7,14 +7,6 @@ Just A React and Express app to upload audio files to Cloudinary and play them b
 
 You need two terminal windows to run this app—one for the backend and one for the frontend.
 
-# one Shot command Running from root folder 
-
-Open a terminal and run:
-
-```
-npm run setup && npm run dev
-```
-
 
 # Manual 
 
@@ -71,6 +63,16 @@ npm run setup && npm run dev
    ```bash
    npm run dev
    ```
+
+
+
+# one Shot command  root 
+
+Open a terminal and run in root folder after setting .env in backend:
+
+```
+npm run setup && npm run dev
+```
 
 4. Open the localhost link provided in the terminal (usually `http://localhost:5173`) in your web browser.
 
